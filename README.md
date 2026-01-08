@@ -1,4 +1,4 @@
-# Sarcasm API
+# Snark-as-a-service API
 
 A minimal FastAPI service that returns a sarcastic quote.
 
