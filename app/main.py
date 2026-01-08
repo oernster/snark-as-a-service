@@ -49,7 +49,7 @@ def root(request: Request):
     quote = SarcasmService().get_quote()
     return templates.TemplateResponse(
         "sarcasm.html",
-        {"request": request, "title": settings.app_name, "quote": quote},
+        {"request": request, "title": "SnarkAPI", "quote": quote},
     )
 
 
@@ -60,6 +60,6 @@ def sarcasm_page(request: Request):
     quote = SarcasmService().get_quote()
     return templates.TemplateResponse(
         "sarcasm.html",
-        {"request": request, "title": settings.app_name, "quote": quote},
+        {"request": request, "title": "SnarkAPI", "quote": quote},
     )
 
