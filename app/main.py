@@ -1,17 +1,22 @@
 from pathlib import Path
 
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from starlette.requests import Request
 
 from app.api.v1 import sarcasm
 from app.core.config import settings
+from app.services.sarcasm_service import SarcasmService
 
 
 app = FastAPI(
     title=settings.app_name,
     version=settings.api_version,
 )
+
+templates = Jinja2Templates(directory="app/templates")
 
 # Serve files from ./static at /static
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -35,11 +40,26 @@ def favicon() -> FileResponse:
 
 
 @app.get("/", include_in_schema=False)
-def root() -> dict[str, str]:
-    return {
-        "message": "Welcome. Expectations should be managed accordingly.",
-        "docs": "/docs",
-        "openapi": "/openapi.json",
-        "api": "/api/v1/sarcasm"
-    }
+def root(request: Request):
+    """Homepage: render the styled sarcasm page.
+
+    (The plain-text API remains available at /api/v1/sarcasm/.)
+    """
+
+    quote = SarcasmService().get_quote()
+    return templates.TemplateResponse(
+        "sarcasm.html",
+        {"request": request, "title": settings.app_name, "quote": quote},
+    )
+
+
+@app.get("/sarcasm", include_in_schema=False)
+def sarcasm_page(request: Request):
+    """Beautiful HTML page showing only the quote text."""
+
+    quote = SarcasmService().get_quote()
+    return templates.TemplateResponse(
+        "sarcasm.html",
+        {"request": request, "title": settings.app_name, "quote": quote},
+    )
 

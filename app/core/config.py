@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    app_name: str = "Monday's Sarcasm API"
+    app_name: str = "My Sarcasm API"
     api_version: str = "v1"
 
     # Pydantic v2 style configuration (avoids deprecation warnings in tests)
