@@ -42,6 +42,23 @@
         letter-spacing: 0.02em;
         opacity: 0.9;
       }
+      .more {
+        appearance: none;
+        border: 2px solid #ffffff;
+        background: rgba(255, 255, 255, 0.08);
+        color: #ffffff;
+        padding: 0.75rem 1.25rem;
+        border-radius: 999px;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+      .more:hover {
+        background: rgba(255, 255, 255, 0.16);
+      }
+      .more:active {
+        transform: translateY(1px);
+      }
       .quote {
         grid-row: 4;
         max-width: 70ch;
@@ -60,6 +77,13 @@
       <header class="header">
         <img src="/static/favicon.png" alt="SnarkyAPI" />
         <div class="brand">SnarkyAPI by Oliver Ernster</div>
+        <button
+          class="more"
+          type="button"
+          onclick="window.location.href = window.location.pathname + '?t=' + Date.now()"
+        >
+          More snark please!
+        </button>
       </header>
 
       <main class="quote">{{ quote }}</main>
