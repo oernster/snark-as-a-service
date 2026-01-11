@@ -83,17 +83,59 @@
       <header class="header">
         <img src="/static/favicon.png" alt="SnarkyAPI" />
         <div class="brand">SnarkyAPI by Oliver Ernster</div>
-        <button
-          class="more"
-          type="button"
-          onclick="window.location.href = window.location.pathname + '?t=' + Date.now()"
-        >
+        <button class="more" id="more-snark" type="button">
           More snark please!
         </button>
       </header>
 
-      <main class="quote">{{ quote }}</main>
+      <main class="quote" id="quote">{{ quote }}</main>
     </div>
+
+    <script>
+      // Prevent browser lockups from rapid clicking by avoiding full-page navigations
+      // and ensuring only one request is in-flight at a time.
+      (() => {
+        const button = document.getElementById('more-snark')
+        const quoteEl = document.getElementById('quote')
+        if (!button || !quoteEl) return
+
+        let inFlight = false
+        let controller = null
+
+        async function loadNextQuote() {
+          if (inFlight) return
+          inFlight = true
+          button.disabled = true
+          button.setAttribute('aria-busy', 'true')
+
+          try {
+            // If something previously started (e.g., due to browser quirks), abort it.
+            if (controller) controller.abort()
+            controller = new AbortController()
+
+            const res = await fetch('/api/v1/sarcasm/', {
+              method: 'GET',
+              cache: 'no-store',
+              signal: controller.signal,
+              headers: { 'Accept': 'text/plain' },
+            })
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`)
+            const text = await res.text()
+            quoteEl.textContent = text
+          } catch (e) {
+            // Non-fatal: keep the existing quote and allow retry.
+            console.warn('Failed to load quote:', e)
+          } finally {
+            inFlight = false
+            button.disabled = false
+            button.removeAttribute('aria-busy')
+          }
+        }
+
+        button.addEventListener('click', loadNextQuote)
+      })()
+    </script>
   </body>
 </html>
 
