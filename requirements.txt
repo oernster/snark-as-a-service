@@ -1,7 +1,25 @@
-fastapi
-httpx
-jinja2
-uvicorn
-pydantic
-pydantic-settings
-pytest
+# Pinned to a known-good, locally-verified set so Render rebuilds are
+# reproducible. Unpinned deps let a redeploy silently pull a breaking
+# release. Re-freeze deliberately when upgrading.
+
+# Direct dependencies
+fastapi==0.128.0
+uvicorn==0.40.0
+jinja2==3.1.6
+httpx==0.28.1
+pydantic==2.12.5
+pydantic-settings==2.12.0
+pytest==9.0.2
+
+# Framework-critical transitives (pinned so an API-breaking release cannot
+# slip in on rebuild)
+starlette==0.50.0
+pydantic_core==2.41.5
+anyio==4.12.1
+h11==0.16.0
+httpcore==1.0.9
+click==8.3.1
+MarkupSafe==3.0.3
+annotated-types==0.7.0
+certifi==2026.1.4
+idna==3.11
