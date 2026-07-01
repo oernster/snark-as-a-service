@@ -62,23 +62,6 @@
         letter-spacing: 0.02em;
         opacity: 0.9;
       }
-      .more {
-        appearance: none;
-        border: 2px solid #ffffff;
-        background: rgba(255, 255, 255, 0.08);
-        color: #ffffff;
-        padding: 0.75rem 1.25rem;
-        border-radius: 999px;
-        font-weight: 800;
-        font-size: 1rem;
-        cursor: pointer;
-      }
-      .more:hover {
-        background: rgba(255, 255, 255, 0.16);
-      }
-      .more:active {
-        transform: translateY(1px);
-      }
       .quote {
         grid-row: 4;
         max-width: 70ch;
@@ -119,31 +102,31 @@
       <header class="header">
         <img src="/static/favicon.png?v=2" alt="SnarkyAPI" />
         <div class="brand">SnarkyAPI by Oliver Ernster</div>
-        <button class="more" id="more-snark" type="button">
-          More snark please!
-        </button>
       </header>
 
       <main class="quote" id="quote">{{ quote }}</main>
     </div>
 
     <script>
-      // Typewriter loop: type the quote out left-to-right, pause, wipe, repeat.
-      // The "More snark please!" button fetches a fresh quote; the loop swaps it
-      // in on its next wipe so we never mutate the text mid-line. Only one
-      // request is ever in flight (prevents hammering the API).
+      // Auto-rotating typewriter: type a snark left-to-right, hold for 5s, wipe,
+      // then type a freshly-fetched snark, forever. The next snark is prefetched
+      // during the hold so there's no gap. Only one request is ever in flight.
       (() => {
         const quoteEl = document.getElementById('quote')
-        const button = document.getElementById('more-snark')
         if (!quoteEl) return
 
         // Per-character and pause timings (ms).
         const TYPE_MS = 55
         const DELETE_MS = 28
-        const PAUSE_FULL_MS = 1900
-        const PAUSE_EMPTY_MS = 450
+        const HOLD_MS = 5000 // pause once fully typed
+        const PAUSE_EMPTY_MS = 450 // brief beat between snarks
 
+        // Initial text is the server-rendered {{ quote }}. If it is missing or
+        // leaked through unrendered (e.g. the file was opened without the app),
+        // ignore it and fetch a real snark rather than typing a raw placeholder.
+        const looksUnrendered = (s) => !s || /\{\{[\s\S]*\}\}/.test(s)
         let fullText = (quoteEl.textContent || '').trim()
+        if (looksUnrendered(fullText)) fullText = ''
         let pendingText = null
 
         // Drive text through a stable text node so the caret element persists.
@@ -152,16 +135,12 @@
           textNode.nodeValue = str
         }
 
-        // --- Fetch: single in-flight request, abortable, no caching. ---
+        // --- Fetch a fresh snark into pendingText. Single in-flight, abortable. ---
         let inFlight = false
         let controller = null
-        async function loadNextQuote() {
+        async function fetchNextSnark() {
           if (inFlight) return
           inFlight = true
-          if (button) {
-            button.disabled = true
-            button.setAttribute('aria-busy', 'true')
-          }
           try {
             if (controller) controller.abort()
             controller = new AbortController()
@@ -173,19 +152,13 @@
             })
             if (!res.ok) throw new Error(`HTTP ${res.status}`)
             const text = (await res.text()).trim()
-            // Queue it; the loop types it after the current wipe.
-            pendingText = text
+            if (text) pendingText = text
           } catch (e) {
-            console.warn('Failed to load quote:', e)
+            console.warn('Failed to load snark:', e)
           } finally {
             inFlight = false
-            if (button) {
-              button.disabled = false
-              button.removeAttribute('aria-busy')
-            }
           }
         }
-        if (button) button.addEventListener('click', loadNextQuote)
 
         // Build: [ text node ][ blinking caret ].
         const caret = document.createElement('span')
@@ -204,18 +177,22 @@
             i += 1
             render(fullText.slice(0, i))
             if (i >= fullText.length) {
-              phase = 'pausing'
-              setTimeout(tick, PAUSE_FULL_MS)
+              phase = 'holding'
+              // Prefetch the next snark while we hold the finished line.
+              fetchNextSnark()
+              setTimeout(tick, HOLD_MS)
             } else {
               setTimeout(tick, TYPE_MS)
             }
-          } else if (phase === 'pausing') {
+          } else if (phase === 'holding') {
             phase = 'deleting'
             setTimeout(tick, DELETE_MS)
           } else {
             i -= 1
             render(fullText.slice(0, Math.max(i, 0)))
             if (i <= 0) {
+              // Swap in the freshly-fetched snark (fall back to re-typing the
+              // current one if the fetch hasn't landed yet).
               if (pendingText !== null) {
                 fullText = pendingText
                 pendingText = null
@@ -230,7 +207,19 @@
         }
 
         render('')
-        setTimeout(tick, PAUSE_EMPTY_MS)
+        if (fullText) {
+          setTimeout(tick, PAUSE_EMPTY_MS)
+        } else {
+          // No usable server text: fetch one first so we never show a blank
+          // line or a raw placeholder, then start the loop.
+          fetchNextSnark().then(() => {
+            if (pendingText !== null) {
+              fullText = pendingText
+              pendingText = null
+            }
+            setTimeout(tick, PAUSE_EMPTY_MS)
+          })
+        }
       })()
     </script>
 

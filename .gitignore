@@ -1,6 +1,9 @@
 # Claude Code local session files
 .claude/
 
+# Stray shell-redirect artefact (a file literally named "1") at repo root
+/1
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
