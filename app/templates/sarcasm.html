@@ -143,10 +143,6 @@
         const PAUSE_FULL_MS = 1900
         const PAUSE_EMPTY_MS = 450
 
-        const reduce = window.matchMedia(
-          '(prefers-reduced-motion: reduce)'
-        ).matches
-
         let fullText = (quoteEl.textContent || '').trim()
         let pendingText = null
 
@@ -177,13 +173,8 @@
             })
             if (!res.ok) throw new Error(`HTTP ${res.status}`)
             const text = (await res.text()).trim()
-            if (reduce) {
-              fullText = text
-              render(text)
-            } else {
-              // Queue it; the loop types it after the current wipe.
-              pendingText = text
-            }
+            // Queue it; the loop types it after the current wipe.
+            pendingText = text
           } catch (e) {
             console.warn('Failed to load quote:', e)
           } finally {
@@ -195,14 +186,6 @@
           }
         }
         if (button) button.addEventListener('click', loadNextQuote)
-
-        // Reduced motion: show the full static quote, no typing animation.
-        if (reduce) {
-          quoteEl.textContent = ''
-          quoteEl.appendChild(textNode)
-          render(fullText)
-          return
-        }
 
         // Build: [ text node ][ blinking caret ].
         const caret = document.createElement('span')
@@ -252,15 +235,11 @@
     </script>
 
     <script>
-      // Lightweight canvas rain behind the content. Honours reduced-motion.
+      // Lightweight canvas rain behind the content. Always animates (the page's
+      // motion is intentional), and naturally pauses when the tab is hidden.
       (() => {
         const canvas = document.getElementById('rain')
         if (!canvas) return
-
-        const prefersReducedMotion = window.matchMedia(
-          '(prefers-reduced-motion: reduce)'
-        ).matches
-        if (prefersReducedMotion) return
 
         const ctx = canvas.getContext('2d')
 
