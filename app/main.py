@@ -18,6 +18,9 @@ app = FastAPI(
 
 templates = Jinja2Templates(directory="app/templates")
 
+PAGE_TITLE = "SnarkAPI: professional-grade condescension, on demand"
+STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+
 # Serve files from ./static at /static
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -31,10 +34,32 @@ def favicon() -> FileResponse:
     We store the favicon as a PNG at ./static/favicon.png.
     """
 
-    favicon_path = Path(__file__).resolve().parent.parent / "static" / "favicon.png"
+    favicon_path = STATIC_DIR / "favicon.png"
     return FileResponse(
         path=str(favicon_path),
         media_type="image/png",
+        headers={"Cache-Control": "public, max-age=86400"},
+    )
+
+
+@app.get("/robots.txt", include_in_schema=False)
+def robots_txt() -> FileResponse:
+    """Crawler policy; must be served at the host root to be read."""
+
+    return FileResponse(
+        path=str(STATIC_DIR / "robots.txt"),
+        media_type="text/plain",
+        headers={"Cache-Control": "public, max-age=86400"},
+    )
+
+
+@app.get("/sitemap.xml", include_in_schema=False)
+def sitemap_xml() -> FileResponse:
+    """Sitemap for the snarkapi.com host, referenced from robots.txt."""
+
+    return FileResponse(
+        path=str(STATIC_DIR / "sitemap.xml"),
+        media_type="application/xml",
         headers={"Cache-Control": "public, max-age=86400"},
     )
 
@@ -50,7 +75,7 @@ def root(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="sarcasm.html",
-        context={"title": "SnarkAPI", "quote": quote},
+        context={"title": PAGE_TITLE, "quote": quote},
     )
 
 
@@ -62,6 +87,6 @@ def sarcasm_page(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="sarcasm.html",
-        context={"title": "SnarkAPI", "quote": quote},
+        context={"title": PAGE_TITLE, "quote": quote},
     )
 
