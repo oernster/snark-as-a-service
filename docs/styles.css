@@ -221,6 +221,13 @@ section.alt {
   margin: 0 0 42px;
   font-size: 17px;
 }
+.prose p {
+  color: var(--muted);
+  font-size: 16.5px;
+  max-width: 760px;
+  margin: 0 0 18px;
+}
+.prose p:last-child { margin-bottom: 0; }
 
 .features {
   display: grid;
