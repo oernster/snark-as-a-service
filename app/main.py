@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -9,7 +9,6 @@ from starlette.requests import Request
 from app.api.v1 import sarcasm
 from app.core.config import settings
 from app.services.sarcasm_service import SarcasmService
-
 
 app = FastAPI(
     title=settings.app_name,
@@ -80,13 +79,12 @@ def root(request: Request):
 
 
 @app.get("/sarcasm", include_in_schema=False)
-def sarcasm_page(request: Request):
-    """Beautiful HTML page showing only the quote text."""
+def sarcasm_page() -> RedirectResponse:
+    """Legacy alias for the homepage.
 
-    quote = SarcasmService().get_quote()
-    return templates.TemplateResponse(
-        request=request,
-        name="sarcasm.html",
-        context={"title": PAGE_TITLE, "quote": quote},
-    )
+    This once rendered its own copy of the homepage, which published a second
+    crawlable URL for identical content. It now redirects so the site has one
+    indexable page.
+    """
 
+    return RedirectResponse(url="/", status_code=status.HTTP_301_MOVED_PERMANENTLY)
