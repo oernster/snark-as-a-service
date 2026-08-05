@@ -3,8 +3,6 @@ import random
 from pathlib import Path
 from typing import List
 
-from app.models.quote import Quote
-
 
 class SarcasmService:
     def __init__(self, quotes_path: str | None = None) -> None:

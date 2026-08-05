@@ -10,6 +10,11 @@ httpx==0.28.1
 pydantic==2.12.5
 pydantic-settings==2.12.0
 pytest==9.0.2
+# Required by the coverage gate in pyproject.toml: without it a bare `pytest`
+# fails outright on the unrecognised --cov arguments rather than skipping the
+# gate silently.
+pytest-cov==7.1.0
+coverage==7.15.3
 
 # Framework-critical transitives (pinned so an API-breaking release cannot
 # slip in on rebuild)

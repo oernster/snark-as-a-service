@@ -4,4 +4,3 @@ def test_favicon_is_served(client):
 
     # FastAPI's FileResponse should return the media type we set
     assert response.headers.get("content-type") == "image/png"
-
