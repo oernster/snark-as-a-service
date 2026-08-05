@@ -103,6 +103,20 @@
           <p>Ports, adapters and a proper service layer under the hood.
             Even the sarcasm respects the dependency direction.</p>
         </div>
+        <div class="feature">
+          <div class="fnum">05</div>
+          <h3>Tested to the last branch</h3>
+          <p>Coverage is gated at 100% with branch coverage on; the gate lives
+            in the config rather than a command line, so it cannot be
+            forgotten. The insults are frivolous; the build is not.</p>
+        </div>
+        <div class="feature">
+          <div class="fnum">06</div>
+          <h3>It degrades, it does not die</h3>
+          <p>If the quote supply goes missing or turns up malformed, the
+            service falls back to a built-in reserve and keeps answering. A
+            joke endpoint returning a 500 is worse than one repeating itself.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -121,7 +135,9 @@ You&#8217;ve achieved the rare feat of being wrong in several dimensions.</pre>
       </div>
       <p class="endpoint">Endpoint: <code>GET /api/v1/sarcasm/</code> on
         <code>https://www.snarkapi.com</code>. Or just open the
-        <a href="https://www.snarkapi.com/">live site</a> and let it type at you.</p>
+        <a href="https://www.snarkapi.com/">live site</a> and let it type at you.
+        That is the whole surface: one endpoint and one homepage address, with
+        every other path folded into it.</p>
     </div>
   </section>
 </main>
@@ -130,7 +146,8 @@ You&#8217;ve achieved the rare feat of being wrong in several dimensions.</pre>
   <div class="container footer-inner">
     <div>
       <strong>SnarkAPI</strong>: condescension as a service<br>
-      (c) Oliver Ernster · Built with FastAPI · GPL-3.0
+      (c) Oliver Ernster · Built with FastAPI · GPL-3.0 ·
+      v<!--VERSION-->1.4.0<!--/VERSION-->
     </div>
     <div class="footer-links">
       <a href="https://www.snarkapi.com/">Live site</a>
@@ -152,7 +169,7 @@ You&#8217;ve achieved the rare feat of being wrong in several dimensions.</pre>
       'You’ve achieved the rare feat of being wrong in several dimensions.',
       'You treat regression like a form of nostalgia.',
       'You scale systems like someone rearranging saltshakers.',
-      'Your DR strategy involves hope and hard drives from 2012.',
+      'Your DR strategy involves hope and hard drives older than the intern.',
       'Your app has unlimited potential. Unfortunately, it is mostly theoretical.',
     ]
     const TYPE_MS = 55

@@ -1,6 +1,9 @@
 # Claude Code local session files
 .claude/
 
+# Working release notes, drafted locally and never committed
+NOTES.md
+
 # Stray shell-redirect artefact (a file literally named "1") at repo root
 /1
 

@@ -9,10 +9,11 @@ from starlette.requests import Request
 from app.api.v1 import sarcasm
 from app.core.config import settings
 from app.services.sarcasm_service import SarcasmService
+from app.version import __version__
 
 app = FastAPI(
     title=settings.app_name,
-    version=settings.api_version,
+    version=__version__,
 )
 
 templates = Jinja2Templates(directory="app/templates")

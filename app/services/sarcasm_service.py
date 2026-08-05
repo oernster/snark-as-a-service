@@ -19,7 +19,7 @@ class SarcasmService:
             if not isinstance(data, list) or not all(isinstance(q, str) for q in data):
                 raise ValueError("Expected a list of strings in quotes.json")
             return data
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 - any load failure must degrade, not 500
             print(f"Warning: Failed to load quotes. Falling back. Reason: {e}")
             return self._default_quotes()
 

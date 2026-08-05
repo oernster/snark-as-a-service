@@ -61,6 +61,14 @@
       <p>What works now is a live FastAPI service at snarkapi.com behind a landing page that types
         its verdict at you over a moody blue downpour. Open source under GPL-3.0, no feelings
         spared and the drama is not a bug.</p>
+      <p>The discipline is the part that is not a joke. Coverage is gated at 100% with branch
+        coverage on and the gate sits in the project config, so it applies to a bare test run
+        rather than to whoever remembers the flags. The paths worth holding are the unhappy ones:
+        if the quote supply goes missing or turns up in the wrong shape, the service drops to a
+        built-in reserve and keeps answering, because a joke endpoint returning a 500 is worse
+        than one repeating itself. Dependencies are pinned exactly so a redeploy cannot quietly
+        pull a breaking release; the homepage answers on one address only, so a search engine
+        sees a single page instead of two copies arguing over the same content.</p>
       <p>Full reasoning at <a href="https://www.crankthecode.com/posts/snarkapi">crankthecode.com</a>.</p>
       <div class="cta" style="justify-content:flex-start;margin-top:30px;">
         <a class="btn btn-primary" href="https://www.snarkapi.com/">Insult me &rarr;</a>
@@ -74,7 +82,8 @@
   <div class="container footer-inner">
     <div>
       <strong>SnarkAPI</strong>: condescension as a service<br>
-      (c) Oliver Ernster · Built with FastAPI · GPL-3.0
+      (c) Oliver Ernster · Built with FastAPI · GPL-3.0 ·
+      v<!--VERSION-->1.4.0<!--/VERSION-->
     </div>
     <div class="footer-links">
       <a href="https://www.snarkapi.com/">Live site</a>
